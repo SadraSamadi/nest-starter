@@ -1,0 +1,7 @@
+{
+  "entryFile": "index",
+  "compilerOptions": {
+    "tsConfigPath": "tsconfig.json",
+    "deleteOutDir": true
+  }
+}
