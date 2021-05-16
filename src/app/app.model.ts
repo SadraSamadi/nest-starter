@@ -30,4 +30,13 @@ export class AppConfig {
   @IsString()
   public DB_PASS: string;
 
+  @IsString()
+  public JWT_SECRET: string;
+
+  @IsString()
+  public JWT_EXPIRES_IN: string;
+
+  @IsString()
+  public AUTH_PREFIX: string;
+
 }

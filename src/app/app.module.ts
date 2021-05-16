@@ -3,10 +3,11 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {plainToClass} from 'class-transformer';
 import {validateSync} from 'class-validator';
-import {PostModule} from '../post/post.module';
+import {AuthModule} from '../auth/auth.module';
 import {AppController} from './app.controller';
 import {AppConfig} from './app.model';
 import {AppService} from './app.service';
+import {PostModule} from './post.feature';
 
 @Module({
   imports: [
@@ -28,10 +29,10 @@ import {AppService} from './app.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService<AppConfig>) => ({
-        type: config.get('DB_TYPE') as any,
+        type: config.get<any>('DB_TYPE'),
         host: config.get('DB_HOST'),
         port: config.get('DB_PORT'),
-        database: config.get('DB_NAME') as string,
+        database: config.get<string>('DB_NAME'),
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         synchronize: config.get('DEBUG'),
@@ -40,6 +41,7 @@ import {AppService} from './app.service';
         autoLoadEntities: true
       })
     }),
+    AuthModule,
     PostModule
   ],
   providers: [AppService],
