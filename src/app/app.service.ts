@@ -2,19 +2,25 @@ import {Injectable, OnApplicationBootstrap} from '@nestjs/common';
 import faker from 'faker';
 import {ALL, READ} from '../auth/auth.constant';
 import {RoleService} from '../auth/user/role.service';
-import {UserService} from '../auth/user/user.service';
 import {UserStatus} from '../auth/user/user.entity';
-import {PostService} from './post.feature';
+import {UserService} from '../auth/user/user.service';
+import {PrefService} from '../pref/pref.service';
+import {PostService} from './post/post.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
 
-  public constructor(private roleService: RoleService,
+  private static readonly initialized = 'initialized';
+
+  public constructor(private prefs: PrefService,
+                     private roleService: RoleService,
                      private userService: UserService,
                      private postService: PostService) {
   }
 
   public async onApplicationBootstrap(): Promise<void> {
+    if (await this.prefs.get(AppService.initialized, false))
+      return;
     let admin = await this.roleService.createOneByName('admin', [
       {feature: ALL, action: ALL, limited: false}
     ]);
@@ -54,6 +60,7 @@ export class AppService implements OnApplicationBootstrap {
         role: user,
         status: UserStatus.ACTIVE
       });
+    await this.prefs.set(AppService.initialized, true);
   }
 
 }

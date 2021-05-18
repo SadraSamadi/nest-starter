@@ -4,7 +4,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppConfig} from './app/app.model';
 import {AppModule} from './app/app.module';
 
-(async () => {
+async function main(): Promise<void> {
   let app = await NestFactory.create(AppModule);
   let config = app.get<ConfigService<AppConfig>>(ConfigService);
   let prefix = config.get('PREFIX');
@@ -13,4 +13,6 @@ import {AppModule} from './app/app.module';
   await app.listen(port);
   let url = await app.getUrl();
   Logger.log(`server started on ${url}`);
-})();
+}
+
+(async () => main())();

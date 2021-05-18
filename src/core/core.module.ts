@@ -15,8 +15,8 @@ export class CoreModule {
         ConfigModule.forRoot({
           expandVariables: true,
           envFilePath: [
-            'config/.env',
-            `config/${process.env.NODE_ENV}.env`
+            'res/.env',
+            `res/${process.env.NODE_ENV}.env`
           ],
           validate: config => {
             let cfg = plainToClass(cls, config, {enableImplicitConversion: true});
