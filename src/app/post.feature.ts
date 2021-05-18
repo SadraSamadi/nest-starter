@@ -1,19 +1,16 @@
-import {Controller, Injectable, Module, UseGuards} from '@nestjs/common';
+import {ClassSerializerInterceptor, Controller, Injectable, Module, UseGuards, UseInterceptors} from '@nestjs/common';
 import {InjectRepository, TypeOrmModule} from '@nestjs/typeorm';
-import {Column, Entity, ManyToOne, Repository} from 'typeorm';
-import {Roles} from '../auth/auth.decorator';
-import {AuthGuard, RoleGuard} from '../auth/auth.guard';
+import {Column, Entity, Repository} from 'typeorm';
+import {Feature} from '../auth/auth.decorator';
+import {AuthGuard} from '../auth/auth.guard';
+import {PropEntity} from '../auth/auth.model';
 import {AuthModule} from '../auth/auth.module';
-import {UserEntity} from '../auth/user/user.model';
+import {PermissionGuard} from '../auth/user/permission.guard';
 import {CoreController} from '../core/core.controller';
-import {CoreEntity} from '../core/core.entity';
 import {CoreService} from '../core/core.service';
 
-@Entity()
-export class PostEntity extends CoreEntity {
-
-  @ManyToOne(() => UserEntity)
-  public user: UserEntity;
+@Entity('posts')
+export class PostEntity extends PropEntity {
 
   @Column()
   public title: string;
@@ -32,9 +29,10 @@ export class PostService extends CoreService<PostEntity> {
 
 }
 
-@Roles('admin')
+@Feature('posts')
 @Controller('posts')
-@UseGuards(AuthGuard, RoleGuard)
+@UseGuards(AuthGuard, PermissionGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class PostController extends CoreController<PostEntity> {
 
   public constructor(service: PostService) {
@@ -45,11 +43,12 @@ export class PostController extends CoreController<PostEntity> {
 
 @Module({
   imports: [
-    AuthModule,
-    TypeOrmModule.forFeature([PostEntity])
+    TypeOrmModule.forFeature([PostEntity]),
+    AuthModule
   ],
   providers: [PostService],
-  controllers: [PostController]
+  controllers: [PostController],
+  exports: [PostService]
 })
 export class PostModule {
 }

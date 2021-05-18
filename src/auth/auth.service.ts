@@ -3,15 +3,15 @@ import {ConfigService} from '@nestjs/config';
 import argon2 from 'argon2';
 import {plainToClass} from 'class-transformer';
 import jwt from 'jsonwebtoken';
-import {AppConfig} from '../app/app.model';
-import {Authorization, JwtPayload, LoginRequest, RegisterRequest} from './auth.model';
-import {UserEntity, UserStatus} from './user/user.model';
-import {RoleService, UserService} from './user/user.service';
+import {AuthConfig, Authorization, JwtPayload, LoginRequest, RegisterRequest, UpdateRequest} from './auth.model';
+import {RoleService} from './user/role.service';
+import {UserEntity, UserStatus} from './user/user.entity';
+import {UserService} from './user/user.service';
 
 @Injectable()
 export class AuthService {
 
-  public constructor(private config: ConfigService<AppConfig>,
+  public constructor(private config: ConfigService<AuthConfig>,
                      private roleService: RoleService,
                      private userService: UserService) {
   }
@@ -38,7 +38,19 @@ export class AuthService {
     return this.sign(user);
   }
 
-  public async sign(user: UserEntity): Promise<Authorization> {
+  public async findUser(user: UserEntity): Promise<UserEntity> {
+    return user;
+  }
+
+  public async updateUser(user: UserEntity, request: UpdateRequest): Promise<UserEntity> {
+    return this.userService.updateOneById(user.id, {
+      username: request.username,
+      email: request.email,
+      password: request.password
+    });
+  }
+
+  private async sign(user: UserEntity): Promise<Authorization> {
     let secret = this.config.get('JWT_SECRET');
     let expiresIn = this.config.get('JWT_EXPIRES_IN');
     let prefix = this.config.get('AUTH_PREFIX');

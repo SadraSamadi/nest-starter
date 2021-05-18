@@ -1,6 +1,8 @@
-import {Body, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query} from '@nestjs/common';
-import {DeepPartial} from 'typeorm';
-import {CoreEntity} from './core.entity';
+import {Body, Delete, Get, Param, ParseIntPipe, Patch, Post, Query} from '@nestjs/common';
+import {CREATE, DELETE, READ, UPDATE} from '../auth/auth.constant';
+import {Action} from '../auth/auth.decorator';
+import {Payload} from './core.decorator';
+import {CoreEntity, RequestPayload} from './core.model';
 import {CoreService} from './core.service';
 
 export abstract class CoreController<E extends CoreEntity, S extends CoreService<E> = CoreService<E>> {
@@ -9,40 +11,46 @@ export abstract class CoreController<E extends CoreEntity, S extends CoreService
   }
 
   @Post('one')
-  public async createOne(@Body() partial: DeepPartial<E>): Promise<E> {
-    return this.service.createOne(partial);
-  }
-
-  @Post('many')
-  public async createMany(@Body() partials: DeepPartial<E>[]): Promise<E[]> {
-    return this.service.createMany(partials);
+  @Action(CREATE)
+  public async createOne(@Body() entity: E,
+                         @Payload() payload: RequestPayload<E>): Promise<E> {
+    return this.service.createOne(entity as object, payload);
   }
 
   @Get('one/:id')
-  public async findOneById(@Param('id', ParseIntPipe) id: number): Promise<E> {
-    return this.service.findOneById(id);
+  @Action(READ)
+  public async findOneById(@Param('id', ParseIntPipe) id: number,
+                           @Payload() payload: RequestPayload<E>): Promise<E> {
+    return this.service.findOneById(id, payload);
   }
 
   @Get('many')
-  public async findMany(@Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
-                        @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number): Promise<[E[], number]> {
-    return this.service.findMany(skip, take);
+  @Action(READ)
+  public async findMany(@Query('skip', ParseIntPipe) skip: number,
+                        @Query('take', ParseIntPipe) take: number,
+                        @Payload() payload: RequestPayload<E>): Promise<[E[], number]> {
+    return this.service.findMany(skip, take, payload);
   }
 
   @Get('all')
-  public async findAll(): Promise<E[]> {
-    return this.service.findAll();
+  @Action(READ)
+  public async findAll(@Payload() payload: RequestPayload<E>): Promise<E[]> {
+    return this.service.findAll(payload);
   }
 
   @Patch('one/:id')
+  @Action(UPDATE)
   public async updateOneById(@Param('id', ParseIntPipe) id: number,
-                             @Body() partial: DeepPartial<E>): Promise<E> {
-    return this.service.updateOneById(id, partial);
+                             @Body() entity: E,
+                             @Payload() payload: RequestPayload<E>): Promise<E> {
+    return this.service.updateOneById(id, entity as object, payload);
   }
 
   @Delete('one/:id')
-  public async deleteOneById(@Param('id', ParseIntPipe) id: number): Promise<E> {
-    return this.service.deleteOneById(id);
+  @Action(DELETE)
+  public async deleteOneById(@Param('id', ParseIntPipe) id: number,
+                             @Payload() payload: RequestPayload<E>): Promise<E> {
+    return this.service.deleteOneById(id, payload);
   }
 
 }

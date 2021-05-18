@@ -2,30 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import argon2 from 'argon2';
 import {DeepPartial, Repository} from 'typeorm';
+import {RequestPayload} from '../../core/core.model';
 import {CoreService} from '../../core/core.service';
-import {RoleEntity, UserEntity} from './user.model';
-
-@Injectable()
-export class RoleService extends CoreService<RoleEntity> {
-
-  public constructor(@InjectRepository(RoleEntity) repository: Repository<RoleEntity>) {
-    super(repository);
-  }
-
-  public async createOneByName(name: string): Promise<RoleEntity> {
-    return this.createOne({name});
-  }
-
-  public async createManyByNames(...names: string[]): Promise<RoleEntity[]> {
-    let roles = names.map<DeepPartial<RoleEntity>>(name => ({name}));
-    return this.createMany(roles);
-  }
-
-  public async findOneByName(name: string): Promise<RoleEntity> {
-    return this.repository.findOne({name});
-  }
-
-}
+import {UserEntity} from './user.entity';
 
 @Injectable()
 export class UserService extends CoreService<UserEntity> {
@@ -34,20 +13,24 @@ export class UserService extends CoreService<UserEntity> {
     super(repository);
   }
 
-  public async createOne(partial: DeepPartial<UserEntity>): Promise<UserEntity> {
+  public async createOne(partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
     await this.hash(partial);
-    return super.createOne(partial);
+    return super.createOne(partial, payload);
   }
 
-  public async createMany(partials: DeepPartial<UserEntity>[]): Promise<UserEntity[]> {
-    for (let partial of partials)
-      await this.hash(partial);
-    return super.createMany(partials);
+  public async findOneById(id: number, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
+    return super.findOneById(id, {
+      ...payload,
+      options: {
+        ...payload?.options,
+        relations: ['role']
+      }
+    });
   }
 
-  public async updateOneById(id: number, partial: DeepPartial<UserEntity>): Promise<UserEntity> {
+  public async updateOneById(id: number, partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
     await this.hash(partial);
-    return super.updateOneById(id, partial);
+    return super.updateOneById(id, partial, payload);
   }
 
   public async findOneByUsername(username: string): Promise<UserEntity> {

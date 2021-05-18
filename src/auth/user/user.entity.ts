@@ -1,14 +1,7 @@
 import {Exclude} from 'class-transformer';
-import {Column, Entity, JoinColumn, OneToOne} from 'typeorm';
-import {CoreEntity} from '../../core/core.entity';
-
-@Entity('roles')
-export class RoleEntity extends CoreEntity {
-
-  @Column({unique: true})
-  public name: string;
-
-}
+import {Column, Entity, JoinColumn, ManyToOne} from 'typeorm';
+import {CoreEntity} from '../../core/core.model';
+import {RoleEntity} from './role.model';
 
 export enum UserStatus {
 
@@ -32,7 +25,7 @@ export class UserEntity extends CoreEntity {
   public password: string;
 
   @JoinColumn()
-  @OneToOne(() => RoleEntity, {eager: true})
+  @ManyToOne(() => RoleEntity)
   public role: RoleEntity;
 
   @Column({type: 'enum', enum: UserStatus})
