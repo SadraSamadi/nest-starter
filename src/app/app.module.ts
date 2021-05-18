@@ -5,7 +5,7 @@ import {PrefModule} from '../pref/pref.module';
 import {AppController} from './app.controller';
 import {AppConfig} from './app.model';
 import {AppService} from './app.service';
-import {PostModule} from './post/post.feature';
+import {PostModule} from './post/post.module';
 import {RoleController} from './user/role.controller';
 import {UserController} from './user/user.controller';
 
