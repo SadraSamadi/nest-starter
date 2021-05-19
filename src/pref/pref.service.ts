@@ -1,13 +1,12 @@
 import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
 import {plainToClass} from 'class-transformer';
-import {Repository} from 'typeorm';
 import {PrefEntity} from './pref.model';
+import {PrefRepository} from './pref.repository';
 
 @Injectable()
 export class PrefService {
 
-  public constructor(@InjectRepository(PrefEntity) private repository: Repository<PrefEntity>) {
+  public constructor(private repository: PrefRepository) {
   }
 
   public async keys(): Promise<string[]> {

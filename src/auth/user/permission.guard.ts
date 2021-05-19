@@ -15,10 +15,10 @@ export class PermissionGuard implements CanActivate {
   }
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    let handler = context.getHandler();
     let controller = context.getClass();
-    let action = this.reflector.get<string>(ACTION, handler);
+    let handler = context.getHandler();
     let feature = this.reflector.get<string>(FEATURE, controller);
+    let action = this.reflector.get<string>(ACTION, handler);
     let user = getRequestPart<UserEntity>(context, USER);
     let permission =
       _.find(user.role.permissions, {feature, action}) ||
@@ -27,8 +27,8 @@ export class PermissionGuard implements CanActivate {
       _.find(user.role.permissions, {feature: ALL, action: ALL});
     if (!permission)
       return false;
-    let payload = getRequestPart<RequestPayload<PropEntity>>(context, PAYLOAD);
-    if (permission.limited)
+    if (permission.limited) {
+      let payload = getRequestPart<RequestPayload<PropEntity>>(context, PAYLOAD);
       setRequestPart<RequestPayload<PropEntity>>(context, PAYLOAD, {
         ...payload,
         one: {
@@ -42,6 +42,7 @@ export class PermissionGuard implements CanActivate {
           ]
         }
       });
+    }
     return true;
   }
 

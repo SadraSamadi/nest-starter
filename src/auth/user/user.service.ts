@@ -1,21 +1,16 @@
 import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
 import argon2 from 'argon2';
-import {DeepPartial, Repository} from 'typeorm';
+import {DeepPartial} from 'typeorm';
 import {RequestPayload} from '../../core/core.model';
 import {CoreService} from '../../core/core.service';
 import {UserEntity} from './user.entity';
+import {UserRepository} from './user.repository';
 
 @Injectable()
 export class UserService extends CoreService<UserEntity> {
 
-  public constructor(@InjectRepository(UserEntity) repository: Repository<UserEntity>) {
+  public constructor(repository: UserRepository) {
     super(repository);
-  }
-
-  public async createOne(partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
-    await this.hash(partial);
-    return super.createOne(partial, payload);
   }
 
   public async findOneById(id: number, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
@@ -28,11 +23,6 @@ export class UserService extends CoreService<UserEntity> {
     });
   }
 
-  public async updateOneById(id: number, partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
-    await this.hash(partial);
-    return super.updateOneById(id, partial, payload);
-  }
-
   public async findOneByUsername(username: string): Promise<UserEntity> {
     return this.repository.findOne({
       where: [
@@ -40,6 +30,16 @@ export class UserService extends CoreService<UserEntity> {
         {email: username}
       ]
     });
+  }
+
+  public async create(partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
+    await this.hash(partial);
+    return super.create(partial, payload);
+  }
+
+  public async merge(entity: UserEntity, partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
+    await this.hash(partial);
+    return super.merge(entity, partial, payload);
   }
 
   private async hash(partial: DeepPartial<UserEntity>): Promise<void> {

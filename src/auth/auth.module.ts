@@ -5,20 +5,20 @@ import {AuthController} from './auth.controller';
 import {AuthGuard} from './auth.guard';
 import {AuthService} from './auth.service';
 import {PermissionGuard} from './user/permission.guard';
-import {PermissionEntity} from './user/permission.model';
+import {PermissionRepository} from './user/permission.repository';
 import {RoleGuard} from './user/role.guard';
-import {RoleEntity} from './user/role.model';
+import {RoleRepository} from './user/role.repository';
 import {RoleService} from './user/role.service';
-import {UserEntity} from './user/user.entity';
+import {UserRepository} from './user/user.repository';
 import {UserService} from './user/user.service';
 
 @Module({
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([
-      PermissionEntity,
-      RoleEntity,
-      UserEntity
+      PermissionRepository,
+      RoleRepository,
+      UserRepository
     ])
   ],
   providers: [

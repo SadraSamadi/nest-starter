@@ -1,14 +1,14 @@
 import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {DeepPartial, Repository} from 'typeorm';
+import {DeepPartial} from 'typeorm';
 import {CoreService} from '../../core/core.service';
 import {PermissionEntity} from './permission.model';
 import {RoleEntity} from './role.model';
+import {RoleRepository} from './role.repository';
 
 @Injectable()
 export class RoleService extends CoreService<RoleEntity> {
 
-  public constructor(@InjectRepository(RoleEntity) repository: Repository<RoleEntity>) {
+  public constructor(repository: RoleRepository) {
     super(repository);
   }
 

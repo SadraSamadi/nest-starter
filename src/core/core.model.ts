@@ -1,6 +1,14 @@
-import {Transform} from 'class-transformer';
-import {IsBoolean, IsNumber, IsString} from 'class-validator';
-import {CreateDateColumn, DatabaseType, FindOneOptions, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm';
+import {plainToClass, Transform} from 'class-transformer';
+import {IsBoolean, IsNumber, IsObject, IsString} from 'class-validator';
+import {ParsedQs} from 'qs';
+import {
+  CreateDateColumn,
+  DatabaseType,
+  FindManyOptions,
+  FindOneOptions,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
 import {parseBoolean} from './core.util';
 
 export class CoreConfig {
@@ -36,6 +44,58 @@ export class CoreConfig {
   @IsBoolean()
   @Transform(parseBoolean)
   public DB_LOGG: boolean;
+
+}
+
+export class Pageable {
+
+  @IsNumber()
+  public page: number;
+
+  @IsNumber()
+  public size: number;
+
+  @IsString({each: true})
+  public sort: string[];
+
+  public static from(query: ParsedQs, def?: Partial<Pageable>): Pageable {
+    return plainToClass(Pageable, {
+      page: parseInt(query.page as string) || def?.page,
+      size: parseInt(query.size as string) || def?.size,
+      sort: query.sort ? Array.isArray(query.sort) ? query.sort : [query.sort] : def?.sort
+    });
+  }
+
+  public convert<T>(): FindManyOptions<T> {
+    return {
+      skip: this.page * this.size,
+      take: this.size,
+      order: this.sort.reduce((prev, curr) => {
+        let [key, dir] = curr.split(',');
+        return {
+          ...prev,
+          [key]: dir.toUpperCase()
+        };
+      }, {})
+    };
+  }
+
+}
+
+export class Page<E> {
+
+  @IsObject({each: true})
+  public items: E[];
+
+  @IsNumber()
+  public total: number;
+
+  @IsObject()
+  public pageable: Pageable;
+
+  public static from<S>([items, total]: [S[], number], pageable: Pageable): Page<S> {
+    return plainToClass(Page, {items, total, pageable});
+  }
 
 }
 

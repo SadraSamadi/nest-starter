@@ -3,8 +3,8 @@ import {Feature} from '../../auth/auth.decorator';
 import {AuthGuard} from '../../auth/auth.guard';
 import {PermissionGuard} from '../../auth/user/permission.guard';
 import {CoreController} from '../../core/core.controller';
-import {PostService} from './post.service';
 import {PostEntity} from './post.entity';
+import {PostService} from './post.service';
 
 @Feature('posts')
 @Controller('posts')
