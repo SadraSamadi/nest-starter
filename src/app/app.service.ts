@@ -1,16 +1,15 @@
 import {Injectable, OnApplicationBootstrap} from '@nestjs/common';
 import faker from 'faker';
-import {ALL, READ} from '../auth/auth.constant';
+import {ALL, CREATE, DELETE, READ} from '../auth/auth.constant';
 import {RoleService} from '../auth/user/role.service';
 import {UserStatus} from '../auth/user/user.entity';
 import {UserService} from '../auth/user/user.service';
 import {PrefService} from '../pref/pref.service';
+import {APP_INITIALIZED} from './app.constant';
 import {PostService} from './post/post.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
-
-  private static readonly initialized = 'initialized';
 
   public constructor(private prefs: PrefService,
                      private roleService: RoleService,
@@ -19,16 +18,21 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   public async onApplicationBootstrap(): Promise<void> {
-    if (await this.prefs.get(AppService.initialized, false))
+    if (await this.prefs.get(APP_INITIALIZED, false))
       return;
     let admin = await this.roleService.createOneByName('admin', [
-      {feature: ALL, action: ALL, limited: false}
+      {feature: ALL, action: ALL, granted: true, limited: false}
     ]);
     let author = await this.roleService.createOneByName('author', [
-      {feature: 'posts', action: ALL, limited: true}
+      {feature: 'posts', action: ALL, granted: true, limited: true},
+      {feature: 'comments', action: CREATE, granted: true, limited: true},
+      {feature: 'comments', action: READ, granted: true, limited: true},
+      {feature: 'comments', action: DELETE, granted: true, limited: true}
     ]);
     let user = await this.roleService.createOneByName('user', [
-      {feature: 'posts', action: READ, limited: false}
+      {feature: 'posts', action: READ, granted: true, limited: false},
+      {feature: 'comments', action: CREATE, granted: true, limited: true},
+      {feature: 'comments', action: READ, granted: true, limited: false}
     ]);
     await this.userService.createOne({
       username: 'admin',
@@ -60,7 +64,7 @@ export class AppService implements OnApplicationBootstrap {
         role: user,
         status: UserStatus.ACTIVE
       });
-    await this.prefs.set(AppService.initialized, true);
+    await this.prefs.set(APP_INITIALIZED, true);
   }
 
 }

@@ -15,3 +15,5 @@ export const ROLES = Symbol('roles');
 export const FEATURE = Symbol('feature');
 
 export const ACTION = Symbol('action');
+
+export const PERMISSION = Symbol('permission');

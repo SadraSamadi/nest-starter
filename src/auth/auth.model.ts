@@ -1,7 +1,4 @@
 import {IsString} from 'class-validator';
-import {JoinColumn, ManyToOne} from 'typeorm';
-import {CoreEntity} from '../core/core.model';
-import {UserEntity} from './user/user.entity';
 
 export class AuthConfig {
 
@@ -13,14 +10,6 @@ export class AuthConfig {
 
   @IsString()
   public AUTH_PREFIX: string;
-
-}
-
-export abstract class PropEntity extends CoreEntity {
-
-  @JoinColumn()
-  @ManyToOne(() => UserEntity, {eager: true})
-  public owner: UserEntity;
 
 }
 

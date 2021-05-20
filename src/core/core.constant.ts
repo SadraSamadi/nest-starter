@@ -1,1 +1,3 @@
-export const PAYLOAD = Symbol('payload');
+export const ATTACHMENT = Symbol('attachment');
+
+export const OPTIONS = Symbol('options');

@@ -1,11 +1,8 @@
 import {CanActivate, ExecutionContext, Injectable} from '@nestjs/common';
 import {Reflector} from '@nestjs/core';
 import _ from 'lodash';
-import {PAYLOAD} from '../../core/core.constant';
-import {RequestPayload} from '../../core/core.model';
 import {getRequestPart, setRequestPart} from '../../core/core.util';
-import {ACTION, ALL, FEATURE, USER} from '../auth.constant';
-import {PropEntity} from '../auth.model';
+import {ACTION, ALL, FEATURE, PERMISSION, USER} from '../auth.constant';
 import {UserEntity} from './user.entity';
 
 @Injectable()
@@ -25,24 +22,9 @@ export class PermissionGuard implements CanActivate {
       _.find(user.role.permissions, {feature, action: ALL}) ||
       _.find(user.role.permissions, {feature: ALL, action}) ||
       _.find(user.role.permissions, {feature: ALL, action: ALL});
-    if (!permission)
+    if (!permission?.granted)
       return false;
-    if (permission.limited) {
-      let payload = getRequestPart<RequestPayload<PropEntity>>(context, PAYLOAD);
-      setRequestPart<RequestPayload<PropEntity>>(context, PAYLOAD, {
-        ...payload,
-        one: {
-          ...payload?.one,
-          owner: user
-        },
-        options: {
-          ...payload?.options,
-          where: [
-            {owner: user}
-          ]
-        }
-      });
-    }
+    setRequestPart(context, PERMISSION, permission);
     return true;
   }
 

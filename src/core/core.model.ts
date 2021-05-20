@@ -1,14 +1,7 @@
 import {plainToClass, Transform} from 'class-transformer';
 import {IsBoolean, IsNumber, IsObject, IsString} from 'class-validator';
 import {ParsedQs} from 'qs';
-import {
-  CreateDateColumn,
-  DatabaseType,
-  FindManyOptions,
-  FindOneOptions,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from 'typeorm';
+import {CreateDateColumn, DatabaseType, FindManyOptions, PrimaryGeneratedColumn, UpdateDateColumn} from 'typeorm';
 import {parseBoolean} from './core.util';
 
 export class CoreConfig {
@@ -47,7 +40,7 @@ export class CoreConfig {
 
 }
 
-export class Pageable {
+export class Paging {
 
   @IsNumber()
   public page: number;
@@ -58,8 +51,8 @@ export class Pageable {
   @IsString({each: true})
   public sort: string[];
 
-  public static from(query: ParsedQs, def?: Partial<Pageable>): Pageable {
-    return plainToClass(Pageable, {
+  public static from(query: ParsedQs, def?: Partial<Paging>): Paging {
+    return plainToClass(Paging, {
       page: parseInt(query.page as string) || def?.page,
       size: parseInt(query.size as string) || def?.size,
       sort: query.sort ? Array.isArray(query.sort) ? query.sort : [query.sort] : def?.sort
@@ -71,10 +64,10 @@ export class Pageable {
       skip: this.page * this.size,
       take: this.size,
       order: this.sort.reduce((prev, curr) => {
-        let [key, dir] = curr.split(',');
+        let [field, dir] = curr.split(',');
         return {
           ...prev,
-          [key]: dir.toUpperCase()
+          [field]: dir.toUpperCase()
         };
       }, {})
     };
@@ -91,10 +84,10 @@ export class Page<E> {
   public total: number;
 
   @IsObject()
-  public pageable: Pageable;
+  public paging: Paging;
 
-  public static from<S>([items, total]: [S[], number], pageable: Pageable): Page<S> {
-    return plainToClass(Page, {items, total, pageable});
+  public static from<S>([items, total]: [S[], number], paging: Paging): Page<S> {
+    return plainToClass(Page, {items, total, paging});
   }
 
 }
@@ -109,13 +102,5 @@ export abstract class CoreEntity {
 
   @UpdateDateColumn()
   public updated: Date;
-
-}
-
-export interface RequestPayload<E extends CoreEntity> {
-
-  one: Partial<E>;
-
-  options: FindOneOptions<E>;
 
 }

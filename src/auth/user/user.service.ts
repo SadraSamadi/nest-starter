@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import argon2 from 'argon2';
+import {Request} from 'express';
 import {DeepPartial} from 'typeorm';
-import {RequestPayload} from '../../core/core.model';
 import {CoreService} from '../../core/core.service';
 import {UserEntity} from './user.entity';
 import {UserRepository} from './user.repository';
@@ -13,14 +13,8 @@ export class UserService extends CoreService<UserEntity> {
     super(repository);
   }
 
-  public async findOneById(id: number, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
-    return super.findOneById(id, {
-      ...payload,
-      options: {
-        ...payload?.options,
-        relations: ['role']
-      }
-    });
+  public async findOneById(id: number, request?: Request): Promise<UserEntity> {
+    return this.repository.findOneOrFail(id, {relations: ['role']});
   }
 
   public async findOneByUsername(username: string): Promise<UserEntity> {
@@ -32,14 +26,14 @@ export class UserService extends CoreService<UserEntity> {
     });
   }
 
-  public async create(partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
+  public async create(partial: DeepPartial<UserEntity>, request?: Request): Promise<UserEntity> {
     await this.hash(partial);
-    return super.create(partial, payload);
+    return super.create(partial, request);
   }
 
-  public async merge(entity: UserEntity, partial: DeepPartial<UserEntity>, payload?: RequestPayload<UserEntity>): Promise<UserEntity> {
+  public async merge(entity: UserEntity, partial: DeepPartial<UserEntity>, request?: Request): Promise<UserEntity> {
     await this.hash(partial);
-    return super.merge(entity, partial, payload);
+    return super.merge(entity, partial, request);
   }
 
   private async hash(partial: DeepPartial<UserEntity>): Promise<void> {

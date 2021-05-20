@@ -1,5 +1,5 @@
 import {Column, Entity} from 'typeorm';
-import {PropEntity} from '../../auth/auth.model';
+import {PropEntity} from '../../auth/prop/prop.model';
 
 @Entity('posts')
 export class PostEntity extends PropEntity {

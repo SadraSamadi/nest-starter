@@ -15,6 +15,9 @@ export class PermissionEntity extends CoreEntity {
   public action: string;
 
   @Column()
+  public granted: boolean;
+
+  @Column()
   public limited: boolean;
 
 }

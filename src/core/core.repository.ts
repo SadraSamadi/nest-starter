@@ -1,12 +1,12 @@
 import {FindConditions, FindManyOptions, Repository} from 'typeorm';
-import {CoreEntity, Page, Pageable} from './core.model';
+import {CoreEntity, Page, Paging} from './core.model';
 
 export class PagingRepository<T> extends Repository<T> {
 
-  public async findMany(pageable: Pageable, options?: FindManyOptions<T> | FindConditions<T>): Promise<Page<T>> {
-    let paging = pageable.convert();
-    let results = await this.findAndCount({...paging, ...options});
-    return Page.from(results, pageable);
+  public async findMany(paging: Paging, conditions?: FindManyOptions<T> | FindConditions<T>): Promise<Page<T>> {
+    let options = paging.convert<T>();
+    let results = await this.findAndCount({...options, ...conditions});
+    return Page.from(results, paging);
   }
 
 }

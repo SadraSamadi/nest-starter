@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   public async updateUser(user: UserEntity, request: UpdateRequest): Promise<UserEntity> {
-    return this.userService.updateOneById(user.id, {
+    return this.userService.updateOne(user, {
       username: request.username,
       email: request.email,
       password: request.password
