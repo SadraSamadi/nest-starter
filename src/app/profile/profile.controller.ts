@@ -3,17 +3,17 @@ import {Feature} from '../../auth/auth.decorator';
 import {AuthGuard} from '../../auth/auth.guard';
 import {PropController} from '../../auth/prop/prop.controller';
 import {PermissionGuard} from '../../auth/user/permission.guard';
-import {POSTS} from './post.constant';
-import {PostEntity} from './post.model';
-import {PostService} from './post.service';
+import {PROFILES} from './profile.constant';
+import {ProfileEntity} from './profile.model';
+import {ProfileService} from './profile.service';
 
-@Feature(POSTS)
-@Controller(POSTS)
+@Feature(PROFILES)
+@Controller(PROFILES)
 @UseGuards(AuthGuard, PermissionGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-export class PostController extends PropController<PostEntity> {
+export class ProfileController extends PropController<ProfileEntity> {
 
-  public constructor(service: PostService) {
+  public constructor(service: ProfileService) {
     super(service);
   }
 

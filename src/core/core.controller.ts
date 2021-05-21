@@ -25,7 +25,7 @@ export interface ICoreController<E extends CoreEntity> {
 export class CoreControllerDelegate<E extends CoreEntity, S extends CoreService<E>>
   implements ICoreController<E> {
 
-  public constructor(private service: S) {
+  public constructor(protected service: S) {
   }
 
   public async createOne(entity: E, request: Request): Promise<E> {
@@ -54,13 +54,11 @@ export class CoreControllerDelegate<E extends CoreEntity, S extends CoreService<
 
 }
 
-export abstract class CoreController<E extends CoreEntity, S extends CoreService<E> = CoreService<E>>
+export abstract class CoreController<E extends CoreEntity, S extends CoreService<E> = CoreService<E>, D extends CoreControllerDelegate<E, S> = CoreControllerDelegate<E, S>>
   implements ICoreController<E> {
 
-  protected delegate: CoreControllerDelegate<E, S>;
-
-  protected constructor(protected service: S) {
-    this.delegate = new CoreControllerDelegate<E, S>(service);
+  protected constructor(protected service: S,
+                        protected delegate = new CoreControllerDelegate<E, S>(service) as D) {
   }
 
   @Post('one')

@@ -90,6 +90,16 @@ export class Page<E> {
     return plainToClass(Page, {items, total, paging});
   }
 
+  public async map<S>(mapper: (item: E, index: number, items: E[]) => Promise<S>): Promise<Page<S>> {
+    let items: S[] = [];
+    for (let i = 0; i < this.items.length; i++) {
+      let prev = this.items[i];
+      let curr = await mapper(prev, i, this.items);
+      items.push(curr);
+    }
+    return Page.from([items, this.total], this.paging);
+  }
+
 }
 
 export abstract class CoreEntity {

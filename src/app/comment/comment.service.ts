@@ -1,7 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import {Request} from 'express';
+import {FindConditions} from 'typeorm';
 import {PropService} from '../../auth/prop/prop.service';
-import {CommentEntity} from './comment.entity';
+import {CONDITIONS} from '../../core/core.constant';
+import {Page, Paging} from '../../core/core.model';
+import {CommentEntity, CommentFilter} from './comment.model';
 import {CommentRepository} from './comment.repository';
 
 @Injectable()
@@ -11,9 +14,10 @@ export class CommentService extends PropService<CommentEntity> {
     super(repository);
   }
 
-  // TODO: different limitation for author
-  public async limit(request: Request): Promise<void> {
-    return super.limit(request);
+  public async filter(filter: CommentFilter, paging: Paging, request?: Request): Promise<Page<CommentEntity>> {
+    await this.limit(request);
+    let conditions = request?.[CONDITIONS] as FindConditions<CommentEntity>;
+    return this.repository.findMany(paging, {where: [{...conditions, post: {id: filter.postId}}]});
   }
 
 }

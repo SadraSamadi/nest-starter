@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {PropService} from '../../auth/prop/prop.service';
-import {PostEntity} from './post.entity';
+import {PostEntity} from './post.model';
 import {PostRepository} from './post.repository';
 
 @Injectable()

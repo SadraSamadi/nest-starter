@@ -1,6 +1,6 @@
 import {Request} from 'express';
-import {DeepPartial, FindOneOptions} from 'typeorm';
-import {ATTACHMENT, OPTIONS} from '../../core/core.constant';
+import {DeepPartial, FindConditions} from 'typeorm';
+import {ATTACHMENT, CONDITIONS} from '../../core/core.constant';
 import {Page, Paging} from '../../core/core.model';
 import {CoreRepository} from '../../core/core.repository';
 import {CoreService} from '../../core/core.service';
@@ -14,6 +14,12 @@ export abstract class PropService<P extends PropEntity, R extends CoreRepository
 
   protected constructor(repository: R) {
     super(repository);
+  }
+
+  public async findOne(request?: Request): Promise<P> {
+    await this.limit(request);
+    let conditions = request?.[CONDITIONS] as FindConditions<P>;
+    return this.repository.findOneOrFail(conditions ? {where: [conditions]} : null);
   }
 
   public async findOneById(id: number, request?: Request): Promise<P> {
@@ -43,13 +49,13 @@ export abstract class PropService<P extends PropEntity, R extends CoreRepository
 
   public async limit(request: Request): Promise<void> {
     let attachment = request?.[ATTACHMENT] as P;
-    let options = request?.[OPTIONS] as FindOneOptions<P>;
+    let conditions = request?.[CONDITIONS] as FindConditions<P>;
     let user = request?.[USER] as UserEntity;
     let permission = request?.[PERMISSION] as PermissionEntity;
     if (!permission?.limited)
       return;
     request[ATTACHMENT] = {...attachment, owner: user} as P;
-    request[OPTIONS] = {...options, where: [{owner: user}]} as FindOneOptions<P>;
+    request[CONDITIONS] = {...conditions, owner: user} as FindConditions<P>;
   }
 
 }

@@ -6,7 +6,12 @@ import {UserStatus} from '../auth/user/user.entity';
 import {UserService} from '../auth/user/user.service';
 import {PrefService} from '../pref/pref.service';
 import {APP_INITIALIZED} from './app.constant';
+import {COMMENTS} from './comment/comment.constant';
+import {CommentService} from './comment/comment.service';
+import {POSTS} from './post/post.constant';
 import {PostService} from './post/post.service';
+import {PROFILES} from './profile/profile.constant';
+import {ProfileService} from './profile/profile.service';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -14,7 +19,9 @@ export class AppService implements OnApplicationBootstrap {
   public constructor(private prefs: PrefService,
                      private roleService: RoleService,
                      private userService: UserService,
-                     private postService: PostService) {
+                     private profileService: ProfileService,
+                     private postService: PostService,
+                     private commentService: CommentService) {
   }
 
   public async onApplicationBootstrap(): Promise<void> {
@@ -24,19 +31,21 @@ export class AppService implements OnApplicationBootstrap {
       {feature: ALL, action: ALL, granted: true, limited: false}
     ]);
     let author = await this.roleService.createOneByName('author', [
-      {feature: 'posts', action: ALL, granted: true, limited: true},
-      {feature: 'comments', action: CREATE, granted: true, limited: true},
-      {feature: 'comments', action: READ, granted: true, limited: true},
-      {feature: 'comments', action: DELETE, granted: true, limited: true}
+      {feature: PROFILES, action: ALL, granted: true, limited: true},
+      {feature: POSTS, action: ALL, granted: true, limited: true},
+      {feature: COMMENTS, action: CREATE, granted: true, limited: true},
+      {feature: COMMENTS, action: READ, granted: true, limited: false},
+      {feature: COMMENTS, action: DELETE, granted: true, limited: false}
     ]);
     let user = await this.roleService.createOneByName('user', [
-      {feature: 'posts', action: READ, granted: true, limited: false},
-      {feature: 'comments', action: CREATE, granted: true, limited: true},
-      {feature: 'comments', action: READ, granted: true, limited: false}
+      {feature: PROFILES, action: ALL, granted: true, limited: true},
+      {feature: POSTS, action: READ, granted: true, limited: false},
+      {feature: COMMENTS, action: CREATE, granted: true, limited: true},
+      {feature: COMMENTS, action: READ, granted: true, limited: false}
     ]);
     await this.userService.createOne({
       username: 'admin',
-      email: 'admin@email.com',
+      email: 'info@admin.com',
       password: '12345678',
       role: admin,
       status: UserStatus.ACTIVE
@@ -56,14 +65,32 @@ export class AppService implements OnApplicationBootstrap {
           body: faker.lorem.paragraph()
         });
     }
-    for (let i = 0; i < 3; i++)
-      await this.userService.createOne({
+    let users = await this.userService.findAll();
+    for (let owner of users)
+      await this.profileService.createOne({
+        owner,
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        birthDate: faker.date.past(50),
+        avatar: faker.internet.avatar()
+      });
+    let posts = await this.postService.findAll();
+    for (let i = 0; i < 3; i++) {
+      let owner = await this.userService.createOne({
         username: `user-${i + 1}`,
         email: faker.internet.email(),
         password: '12345678',
         role: user,
         status: UserStatus.ACTIVE
       });
+      for (let post of posts)
+        for (let j = 0; j < 2; j++)
+          await this.commentService.createOne({
+            owner,
+            post,
+            body: faker.lorem.sentence()
+          });
+    }
     await this.prefs.set(APP_INITIALIZED, true);
   }
 

@@ -5,7 +5,9 @@ import {PrefModule} from '../pref/pref.module';
 import {AppController} from './app.controller';
 import {AppConfig} from './app.model';
 import {AppService} from './app.service';
+import {CommentModule} from './comment/comment.module';
 import {PostModule} from './post/post.module';
+import {ProfileModule} from './profile/profile.module';
 import {RoleController} from './user/role.controller';
 import {UserController} from './user/user.controller';
 
@@ -14,7 +16,9 @@ import {UserController} from './user/user.controller';
     CoreModule.forRoot(AppConfig),
     AuthModule,
     PrefModule,
-    PostModule
+    ProfileModule,
+    PostModule,
+    CommentModule
   ],
   providers: [AppService],
   controllers: [

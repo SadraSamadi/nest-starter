@@ -1,7 +1,7 @@
 import {ClassConstructor, plainToClass, plainToClassFromExist} from 'class-transformer';
 import {Request} from 'express';
-import {DeepPartial, FindOneOptions} from 'typeorm';
-import {ATTACHMENT, OPTIONS} from './core.constant';
+import {DeepPartial, FindConditions} from 'typeorm';
+import {ATTACHMENT, CONDITIONS} from './core.constant';
 import {CoreEntity, Page, Paging} from './core.model';
 import {CoreRepository} from './core.repository';
 
@@ -20,18 +20,18 @@ export abstract class CoreService<E extends CoreEntity, R extends CoreRepository
   }
 
   public async findOneById(id: number, request?: Request): Promise<E> {
-    let options = request?.[OPTIONS] as FindOneOptions<E>;
-    return this.repository.findOneOrFail(id, options);
+    let conditions = request?.[CONDITIONS] as FindConditions<E>;
+    return this.repository.findOneOrFail(id, conditions ? {where: [conditions]} : null);
   }
 
   public async findMany(paging: Paging, request?: Request): Promise<Page<E>> {
-    let options = request?.[OPTIONS] as FindOneOptions<E>;
-    return this.repository.findMany(paging, options);
+    let conditions = request?.[CONDITIONS] as FindConditions<E>;
+    return this.repository.findMany(paging, conditions ? {where: [conditions]} : null);
   }
 
   public async findAll(request?: Request): Promise<E[]> {
-    let options = request?.[OPTIONS] as FindOneOptions<E>;
-    return this.repository.find(options);
+    let conditions = request?.[CONDITIONS] as FindConditions<E>;
+    return this.repository.find(conditions ? {where: [conditions]} : null);
   }
 
   public async updateOne(entity: E, partial: DeepPartial<E>, request?: Request): Promise<E> {
