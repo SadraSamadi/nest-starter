@@ -23,7 +23,7 @@ export class AssetService extends PropService<AssetEntity> {
     return this.createOne(partial, request);
   }
 
-  public async updateFileById(id: number, file: Express.Multer.File, request: Request): Promise<AssetEntity> {
+  public async replaceFileById(id: number, file: Express.Multer.File, request: Request): Promise<AssetEntity> {
     let asset = await this.findOneById(id, request);
     let partial = await this.store(file);
     return this.updateOne(asset, partial, request);

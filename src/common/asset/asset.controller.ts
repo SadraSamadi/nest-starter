@@ -5,8 +5,8 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import {FileInterceptor} from '@nestjs/platform-express';
 import {Request} from 'express';
-import {CREATE} from '../../auth/auth.constant';
+import {CREATE, UPDATE} from '../../auth/auth.constant';
 import {Action, Feature} from '../../auth/auth.decorator';
 import {AuthGuard} from '../../auth/auth.guard';
 import {PropController} from '../../auth/prop/prop.controller';
@@ -43,14 +43,14 @@ export class AssetController extends PropController<AssetEntity, AssetService> {
     return this.service.createFile(file, request);
   }
 
-  @Patch('file/:id')
-  @Action(CREATE)
+  @Put('file/:id')
+  @Action(UPDATE)
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
-  public async updateFileById(@Param('id', ParseIntPipe) id: number,
-                              @UploadedFile() file: Express.Multer.File,
-                              @Req() request: Request): Promise<AssetEntity> {
-    return this.service.updateFileById(id, file, request);
+  public async replaceFileById(@Param('id', ParseIntPipe) id: number,
+                               @UploadedFile() file: Express.Multer.File,
+                               @Req() request: Request): Promise<AssetEntity> {
+    return this.service.replaceFileById(id, file, request);
   }
 
 }
