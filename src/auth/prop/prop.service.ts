@@ -6,7 +6,7 @@ import {CoreRepository} from '../../core/core.repository';
 import {CoreService} from '../../core/core.service';
 import {PERMISSION, USER} from '../auth.constant';
 import {PermissionEntity} from '../user/permission.model';
-import {UserEntity} from '../user/user.entity';
+import {UserEntity} from '../user/user.model';
 import {PropEntity} from './prop.model';
 
 export abstract class PropService<P extends PropEntity, R extends CoreRepository<P> = CoreRepository<P>>

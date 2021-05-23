@@ -3,7 +3,7 @@ import argon2 from 'argon2';
 import {Request} from 'express';
 import {DeepPartial} from 'typeorm';
 import {CoreService} from '../../core/core.service';
-import {UserEntity} from './user.entity';
+import {UserEntity} from './user.model';
 import {UserRepository} from './user.repository';
 
 @Injectable()

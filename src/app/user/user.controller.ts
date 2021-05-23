@@ -2,7 +2,7 @@ import {ClassSerializerInterceptor, Controller, UseGuards, UseInterceptors} from
 import {Roles} from '../../auth/auth.decorator';
 import {AuthGuard} from '../../auth/auth.guard';
 import {RoleGuard} from '../../auth/user/role.guard';
-import {UserEntity} from '../../auth/user/user.entity';
+import {UserEntity} from '../../auth/user/user.model';
 import {UserService} from '../../auth/user/user.service';
 import {CoreController} from '../../core/core.controller';
 

@@ -13,7 +13,7 @@ import {User} from './auth.decorator';
 import {AuthGuard} from './auth.guard';
 import {Authorization, LoginRequest, RegisterRequest, UpdateRequest} from './auth.model';
 import {AuthService} from './auth.service';
-import {UserEntity} from './user/user.entity';
+import {UserEntity} from './user/user.model';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)

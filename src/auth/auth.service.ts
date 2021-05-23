@@ -5,7 +5,7 @@ import {plainToClass} from 'class-transformer';
 import jwt from 'jsonwebtoken';
 import {AuthConfig, Authorization, JwtPayload, LoginRequest, RegisterRequest, UpdateRequest} from './auth.model';
 import {RoleService} from './user/role.service';
-import {UserEntity, UserStatus} from './user/user.entity';
+import {UserEntity, UserStatus} from './user/user.model';
 import {UserService} from './user/user.service';
 
 @Injectable()

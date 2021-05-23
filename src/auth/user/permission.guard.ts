@@ -3,7 +3,7 @@ import {Reflector} from '@nestjs/core';
 import _ from 'lodash';
 import {getRequestPart, setRequestPart} from '../../core/core.util';
 import {ACTION, ALL, FEATURE, PERMISSION, USER} from '../auth.constant';
-import {UserEntity} from './user.entity';
+import {UserEntity} from './user.model';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {

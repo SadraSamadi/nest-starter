@@ -1,6 +1,6 @@
 import {JoinColumn, ManyToOne} from 'typeorm';
 import {CoreEntity} from '../../core/core.model';
-import {UserEntity} from '../user/user.entity';
+import {UserEntity} from '../user/user.model';
 
 export abstract class PropEntity extends CoreEntity {
 

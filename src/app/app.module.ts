@@ -1,7 +1,8 @@
 import {Module} from '@nestjs/common';
 import {AuthModule} from '../auth/auth.module';
+import {AssetModule} from '../common/asset/asset.module';
+import {PrefModule} from '../common/pref/pref.module';
 import {CoreModule} from '../core/core.module';
-import {PrefModule} from '../pref/pref.module';
 import {AppController} from './app.controller';
 import {AppConfig} from './app.model';
 import {AppService} from './app.service';
@@ -16,6 +17,7 @@ import {UserController} from './user/user.controller';
     CoreModule.forRoot(AppConfig),
     AuthModule,
     PrefModule,
+    AssetModule,
     ProfileModule,
     PostModule,
     CommentModule

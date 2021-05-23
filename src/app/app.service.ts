@@ -2,9 +2,10 @@ import {Injectable, OnApplicationBootstrap} from '@nestjs/common';
 import faker from 'faker';
 import {ALL, CREATE, DELETE, READ} from '../auth/auth.constant';
 import {RoleService} from '../auth/user/role.service';
-import {UserStatus} from '../auth/user/user.entity';
+import {UserStatus} from '../auth/user/user.model';
 import {UserService} from '../auth/user/user.service';
-import {PrefService} from '../pref/pref.service';
+import {ASSETS} from '../common/asset/asset.constant';
+import {PrefService} from '../common/pref/pref.service';
 import {APP_INITIALIZED} from './app.constant';
 import {COMMENTS} from './comment/comment.constant';
 import {CommentService} from './comment/comment.service';
@@ -31,6 +32,7 @@ export class AppService implements OnApplicationBootstrap {
       {feature: ALL, action: ALL, granted: true, limited: false}
     ]);
     let author = await this.roleService.createOneByName('author', [
+      {feature: ASSETS, action: ALL, granted: true, limited: true},
       {feature: PROFILES, action: ALL, granted: true, limited: true},
       {feature: POSTS, action: ALL, granted: true, limited: true},
       {feature: COMMENTS, action: CREATE, granted: true, limited: true},
@@ -38,6 +40,7 @@ export class AppService implements OnApplicationBootstrap {
       {feature: COMMENTS, action: DELETE, granted: true, limited: false}
     ]);
     let user = await this.roleService.createOneByName('user', [
+      {feature: ASSETS, action: ALL, granted: true, limited: true},
       {feature: PROFILES, action: ALL, granted: true, limited: true},
       {feature: POSTS, action: READ, granted: true, limited: false},
       {feature: COMMENTS, action: CREATE, granted: true, limited: true},

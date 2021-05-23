@@ -90,7 +90,7 @@ export class Page<E> {
     return plainToClass(Page, {items, total, paging});
   }
 
-  public async map<S>(mapper: (item: E, index: number, items: E[]) => Promise<S>): Promise<Page<S>> {
+  public async map<S>(mapper: (item: E, index: number, items: E[]) => S | Promise<S>): Promise<Page<S>> {
     let items: S[] = [];
     for (let i = 0; i < this.items.length; i++) {
       let prev = this.items[i];
@@ -101,6 +101,8 @@ export class Page<E> {
   }
 
 }
+
+export type OneOrMany<T> = T | T[] | Page<T>;
 
 export abstract class CoreEntity {
 

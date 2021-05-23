@@ -1,11 +1,14 @@
 import {DynamicModule, Module} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
+import {EventEmitterModule} from '@nestjs/event-emitter';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {ClassConstructor, plainToClass} from 'class-transformer';
 import {validateSync} from 'class-validator';
 import {CoreConfig} from './core.model';
 
-@Module({})
+@Module({
+  imports: [EventEmitterModule.forRoot()]
+})
 export class CoreModule {
 
   public static forRoot<T extends CoreConfig>(cls: ClassConstructor<T>): DynamicModule {
