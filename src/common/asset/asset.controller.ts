@@ -38,7 +38,7 @@ export class AssetController extends PropController<AssetEntity, AssetService> {
   @Action(CREATE)
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
-  public async createFile(@UploadedFile() file: Express.Multer.File,
+  public async createFile(@UploadedFile('file') file: Express.Multer.File,
                           @Req() request: Request): Promise<AssetEntity> {
     return this.service.createFile(file, request);
   }
@@ -48,7 +48,7 @@ export class AssetController extends PropController<AssetEntity, AssetService> {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
   public async replaceFileById(@Param('id', ParseIntPipe) id: number,
-                               @UploadedFile() file: Express.Multer.File,
+                               @UploadedFile('file') file: Express.Multer.File,
                                @Req() request: Request): Promise<AssetEntity> {
     return this.service.replaceFileById(id, file, request);
   }
