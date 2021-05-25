@@ -32,22 +32,22 @@ export class AppService implements OnApplicationBootstrap {
     if (await this.prefs.get(APP_INITIALIZED, false))
       return;
     let admin = await this.roleService.createOneByName('admin', [
-      {feature: ALL, action: ALL, granted: true, limited: false}
+      {feature: ALL, action: ALL, limited: false, granted: true}
     ]);
     let author = await this.roleService.createOneByName('author', [
-      {feature: ASSETS, action: ALL, granted: true, limited: true},
-      {feature: PROFILES, action: ALL, granted: true, limited: true},
-      {feature: POSTS, action: ALL, granted: true, limited: true},
-      {feature: COMMENTS, action: CREATE, granted: true, limited: true},
-      {feature: COMMENTS, action: READ, granted: true, limited: false},
-      {feature: COMMENTS, action: DELETE, granted: true, limited: false}
+      {feature: ASSETS, action: ALL, limited: true, granted: true},
+      {feature: PROFILES, action: ALL, limited: true, granted: true},
+      {feature: POSTS, action: ALL, limited: true, granted: true},
+      {feature: COMMENTS, action: CREATE, limited: true, granted: true},
+      {feature: COMMENTS, action: READ, limited: false, granted: true},
+      {feature: COMMENTS, action: DELETE, limited: false, granted: true}
     ]);
     let user = await this.roleService.createOneByName('user', [
-      {feature: ASSETS, action: ALL, granted: true, limited: true},
-      {feature: PROFILES, action: ALL, granted: true, limited: true},
-      {feature: POSTS, action: READ, granted: true, limited: false},
-      {feature: COMMENTS, action: CREATE, granted: true, limited: true},
-      {feature: COMMENTS, action: READ, granted: true, limited: false}
+      {feature: ASSETS, action: ALL, limited: true, granted: true},
+      {feature: PROFILES, action: ALL, limited: true, granted: true},
+      {feature: POSTS, action: READ, limited: false, granted: true},
+      {feature: COMMENTS, action: CREATE, limited: true, granted: true},
+      {feature: COMMENTS, action: READ, limited: false, granted: true}
     ]);
     await this.userService.createOne({
       username: 'admin',
