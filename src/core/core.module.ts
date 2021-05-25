@@ -1,8 +1,8 @@
-import {DynamicModule, Module} from '@nestjs/common';
+import {DynamicModule, Module, Type} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {EventEmitterModule} from '@nestjs/event-emitter';
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {ClassConstructor, plainToClass} from 'class-transformer';
+import {plainToClass} from 'class-transformer';
 import {validateSync} from 'class-validator';
 import {CoreConfig} from './core.model';
 
@@ -11,7 +11,7 @@ import {CoreConfig} from './core.model';
 })
 export class CoreModule {
 
-  public static forRoot<T extends CoreConfig>(cls: ClassConstructor<T>): DynamicModule {
+  public static forRoot<T extends CoreConfig>(type: Type<T>): DynamicModule {
     return {
       module: CoreModule,
       imports: [
@@ -22,7 +22,7 @@ export class CoreModule {
             `res/${process.env.NODE_ENV}.env`
           ],
           validate: config => {
-            let cfg = plainToClass(cls, config, {enableImplicitConversion: true});
+            let cfg = plainToClass(type, config, {enableImplicitConversion: true});
             let errors = validateSync(cfg);
             if (errors.length) {
               let msg = errors.toString();

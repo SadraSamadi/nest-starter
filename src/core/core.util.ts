@@ -1,6 +1,12 @@
-import {ExecutionContext} from '@nestjs/common';
+import {ExecutionContext, Type} from '@nestjs/common';
+import {MappedType} from '@nestjs/mapped-types';
+import {IntersectionType} from '@nestjs/swagger';
 import {TransformFnParams} from 'class-transformer';
 import {Request} from 'express';
+
+export function IntersectionTypes(...types: Type[]): MappedType<any> {
+  return types.reduce(IntersectionType);
+}
 
 export function parseBoolean(params: TransformFnParams): boolean {
   let value = params.obj[params.key];

@@ -1,7 +1,8 @@
-import {IntersectionType} from '@nestjs/mapped-types';
 import {AuthConfig} from '../auth/auth.model';
+import {AssetConfig} from '../common/asset/asset.model';
 import {CoreConfig} from '../core/core.model';
+import {IntersectionTypes} from '../core/core.util';
 
-export class AppConfig extends IntersectionType(CoreConfig, AuthConfig) {
+export class AppConfig extends IntersectionTypes(CoreConfig, AuthConfig, AssetConfig) {
 
 }

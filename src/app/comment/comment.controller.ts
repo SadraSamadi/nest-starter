@@ -6,8 +6,7 @@ import {
   Query,
   Req,
   UseGuards,
-  UseInterceptors,
-  ValidationPipe
+  UseInterceptors
 } from '@nestjs/common';
 import {Request} from 'express';
 import {READ} from '../../auth/auth.constant';
@@ -33,7 +32,7 @@ export class CommentController extends PropController<CommentEntity, CommentServ
 
   @Get('filter')
   @Action(READ)
-  public async filter(@Query('postId', ValidationPipe, ParseIntPipe) postId: number,
+  public async filter(@Query('postId', ParseIntPipe) postId: number,
                       @Pageable() paging: Paging,
                       @Req() request: Request): Promise<Page<CommentEntity>> {
     return this.service.filter({postId}, paging, request);

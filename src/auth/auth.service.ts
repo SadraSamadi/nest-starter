@@ -59,10 +59,10 @@ export class AuthService {
     return plainToClass(Authorization, {prefix, token});
   }
 
-  public async verify(authorization: Authorization): Promise<UserEntity> {
+  public async verify(auth: Authorization): Promise<UserEntity> {
     try {
       let secret = this.config.get('JWT_SECRET');
-      let payload = jwt.verify(authorization.token, secret) as JwtPayload;
+      let payload = jwt.verify(auth.token, secret) as JwtPayload;
       let id = parseInt(payload.sub);
       return this.userService.findOneById(id);
     } catch (err) {
