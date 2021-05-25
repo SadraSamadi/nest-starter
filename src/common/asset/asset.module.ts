@@ -10,7 +10,8 @@ import {AssetService} from './asset.service';
 @Module({
   imports: [ConfigModule, AuthModule, TypeOrmModule.forFeature([AssetRepository])],
   providers: [AssetService, AssetInterceptor],
-  controllers: [AssetController]
+  controllers: [AssetController],
+  exports: [AssetService]
 })
 export class AssetModule {
 }

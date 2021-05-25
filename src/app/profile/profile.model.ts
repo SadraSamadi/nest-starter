@@ -1,5 +1,6 @@
-import {Column, Entity} from 'typeorm';
+import {Column, Entity, JoinColumn, OneToOne} from 'typeorm';
 import {PropEntity} from '../../auth/prop/prop.model';
+import {AssetEntity} from '../../common/asset/asset.model';
 import {PROFILES} from './profile.constant';
 
 @Entity(PROFILES)
@@ -14,7 +15,8 @@ export class ProfileEntity extends PropEntity {
   @Column()
   public birthDate: Date;
 
-  @Column()
-  public avatar: string;
+  @JoinColumn()
+  @OneToOne(() => AssetEntity, {eager: true})
+  public avatar: AssetEntity;
 
 }

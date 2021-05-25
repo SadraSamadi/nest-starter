@@ -5,6 +5,8 @@ import {RoleService} from '../auth/user/role.service';
 import {UserStatus} from '../auth/user/user.model';
 import {UserService} from '../auth/user/user.service';
 import {ASSETS} from '../common/asset/asset.constant';
+import {AssetLocation} from '../common/asset/asset.model';
+import {AssetService} from '../common/asset/asset.service';
 import {PrefService} from '../common/pref/pref.service';
 import {APP_INITIALIZED} from './app.constant';
 import {COMMENTS} from './comment/comment.constant';
@@ -20,6 +22,7 @@ export class AppService implements OnApplicationBootstrap {
   public constructor(private prefs: PrefService,
                      private roleService: RoleService,
                      private userService: UserService,
+                     private assetService: AssetService,
                      private profileService: ProfileService,
                      private postService: PostService,
                      private commentService: CommentService) {
@@ -68,15 +71,6 @@ export class AppService implements OnApplicationBootstrap {
           body: faker.lorem.paragraph()
         });
     }
-    let users = await this.userService.findAll();
-    for (let owner of users)
-      await this.profileService.createOne({
-        owner,
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        birthDate: faker.date.past(50),
-        avatar: faker.internet.avatar()
-      });
     let posts = await this.postService.findAll();
     for (let i = 0; i < 3; i++) {
       let owner = await this.userService.createOne({
@@ -94,6 +88,19 @@ export class AppService implements OnApplicationBootstrap {
             body: faker.lorem.sentence()
           });
     }
+    let users = await this.userService.findAll();
+    for (let owner of users)
+      await this.profileService.createOne({
+        owner,
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        birthDate: faker.date.past(50),
+        avatar: await this.assetService.createOne({
+          owner,
+          location: AssetLocation.EXTERNAL,
+          uri: faker.internet.avatar()
+        })
+      });
     await this.prefs.set(APP_INITIALIZED, true);
   }
 
