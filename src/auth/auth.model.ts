@@ -3,13 +3,13 @@ import {IsString} from 'class-validator';
 export class AuthConfig {
 
   @IsString()
+  public JWT_PREFIX: string;
+
+  @IsString()
   public JWT_SECRET: string;
 
   @IsString()
   public JWT_EXPIRES_IN: string;
-
-  @IsString()
-  public AUTH_PREFIX: string;
 
 }
 

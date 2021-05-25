@@ -53,7 +53,7 @@ export class AuthService {
   private async sign(user: UserEntity): Promise<Authorization> {
     let secret = this.config.get('JWT_SECRET');
     let expiresIn = this.config.get('JWT_EXPIRES_IN');
-    let prefix = this.config.get('AUTH_PREFIX');
+    let prefix = this.config.get('JWT_PREFIX');
     let subject = String(user.id);
     let token = jwt.sign({}, secret, {expiresIn, subject});
     return plainToClass(Authorization, {prefix, token});
