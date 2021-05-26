@@ -15,6 +15,7 @@
     "isolatedModules": true,
     "importHelpers": true,
     "skipLibCheck": true,
+    "incremental": true,
     "sourceMap": true,
     "allowJs": true
   },

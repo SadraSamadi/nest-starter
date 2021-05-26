@@ -102,7 +102,13 @@ export class Page<E> {
 
 }
 
-export type OneOrMany<T> = T | T[] | Page<T>;
+export class Event<P> {
+
+  public constructor(public type: string,
+                     public payload: P) {
+  }
+
+}
 
 export abstract class CoreEntity {
 

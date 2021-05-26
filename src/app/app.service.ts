@@ -1,4 +1,7 @@
-import {Injectable, OnApplicationBootstrap} from '@nestjs/common';
+import {Injectable, Logger, OnApplicationBootstrap} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {OnEvent} from '@nestjs/event-emitter';
+import {plainToClass} from 'class-transformer';
 import faker from 'faker';
 import {ALL, CREATE, DELETE, READ} from '../auth/auth.constant';
 import {RoleService} from '../auth/user/role.service';
@@ -8,7 +11,9 @@ import {ASSETS} from '../common/asset/asset.constant';
 import {AssetLocation} from '../common/asset/asset.model';
 import {AssetService} from '../common/asset/asset.service';
 import {PrefService} from '../common/pref/pref.service';
+import {Event} from '../core/core.model';
 import {APP_INITIALIZED} from './app.constant';
+import {AppConfig, Externals} from './app.model';
 import {COMMENTS} from './comment/comment.constant';
 import {CommentService} from './comment/comment.service';
 import {POSTS} from './post/post.constant';
@@ -19,7 +24,8 @@ import {ProfileService} from './profile/profile.service';
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
 
-  public constructor(private prefs: PrefService,
+  public constructor(private config: ConfigService<AppConfig>,
+                     private prefs: PrefService,
                      private roleService: RoleService,
                      private userService: UserService,
                      private assetService: AssetService,
@@ -102,6 +108,17 @@ export class AppService implements OnApplicationBootstrap {
         })
       });
     await this.prefs.set(APP_INITIALIZED, true);
+  }
+
+  @OnEvent('**')
+  public handleEvent(event: Event<any>) {
+    Logger.log(`${event.type} - ${event.payload}`);
+  }
+
+  public async externals(): Promise<Externals> {
+    return plainToClass(Externals, {
+      cdn: this.config.get('ASSET_CDN')
+    });
   }
 
 }

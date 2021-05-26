@@ -1,6 +1,5 @@
 import {ExecutionContext, Type} from '@nestjs/common';
-import {MappedType} from '@nestjs/mapped-types';
-import {IntersectionType} from '@nestjs/swagger';
+import {IntersectionType, MappedType} from '@nestjs/mapped-types';
 import {TransformFnParams} from 'class-transformer';
 import {Request} from 'express';
 

@@ -39,7 +39,7 @@ export class AssetEntity extends PropEntity {
   @Column({nullable: true})
   public ext: string;
 
-  @Column({nullable: true})
+  @Column()
   public uri: string;
 
 }

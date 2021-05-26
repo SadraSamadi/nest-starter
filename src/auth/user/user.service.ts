@@ -19,6 +19,7 @@ export class UserService extends CoreService<UserEntity> {
 
   public async findOneByUsername(username: string): Promise<UserEntity> {
     return this.repository.findOne({
+      relations: ['role'],
       where: [
         {username},
         {email: username}

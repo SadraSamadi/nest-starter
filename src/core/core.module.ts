@@ -7,11 +7,13 @@ import {validateSync} from 'class-validator';
 import {CoreConfig} from './core.model';
 
 @Module({
-  imports: [EventEmitterModule.forRoot()]
+  imports: [
+    EventEmitterModule.forRoot({wildcard: true})
+  ]
 })
 export class CoreModule {
 
-  public static forRoot<T extends CoreConfig>(type: Type<T>): DynamicModule {
+  public static forRoot(type: Type): DynamicModule {
     return {
       module: CoreModule,
       imports: [
@@ -34,7 +36,7 @@ export class CoreModule {
         TypeOrmModule.forRootAsync({
           imports: [ConfigModule],
           inject: [ConfigService],
-          useFactory: (config: ConfigService<T>) => ({
+          useFactory: (config: ConfigService<CoreConfig>) => ({
             type: config.get<any>('DB_TYPE'),
             host: config.get('DB_HOST'),
             port: config.get('DB_PORT'),

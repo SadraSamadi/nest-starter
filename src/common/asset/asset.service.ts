@@ -30,7 +30,7 @@ export class AssetService extends PropService<AssetEntity> {
   }
 
   private async store(file: Express.Multer.File): Promise<DeepPartial<AssetEntity>> {
-    let storage = this.config.get('ASSET_STORAGE', '.');
+    let storage = this.config.get('ASSET_STORAGE');
     let hash = await hasha.async(file.buffer, {algorithm: 'md5'});
     let ext = mime['getExtension'](file.mimetype);
     let dest = path.resolve(storage, hash);
@@ -41,7 +41,7 @@ export class AssetService extends PropService<AssetEntity> {
       type: file.mimetype,
       hash,
       ext,
-      uri: null
+      uri: `${hash}`
     };
   }
 

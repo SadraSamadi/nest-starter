@@ -20,14 +20,13 @@ import {AuthGuard} from '../../auth/auth.guard';
 import {PropController} from '../../auth/prop/prop.controller';
 import {PermissionGuard} from '../../auth/user/permission.guard';
 import {ASSETS} from './asset.constant';
-import {AssetInterceptor} from './asset.interceptor';
 import {AssetEntity} from './asset.model';
 import {AssetService} from './asset.service';
 
 @Feature(ASSETS)
 @Controller(ASSETS)
 @UseGuards(AuthGuard, PermissionGuard)
-@UseInterceptors(ClassSerializerInterceptor, AssetInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 export class AssetController extends PropController<AssetEntity, AssetService> {
 
   public constructor(service: AssetService) {

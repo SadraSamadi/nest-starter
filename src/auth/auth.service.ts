@@ -1,8 +1,10 @@
 import {Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config';
+import {EventEmitter2} from '@nestjs/event-emitter';
 import argon2 from 'argon2';
 import {plainToClass} from 'class-transformer';
 import jwt from 'jsonwebtoken';
+import {Event} from '../core/core.model';
 import {AuthConfig, Authorization, JwtPayload, LoginRequest, RegisterRequest, UpdateRequest} from './auth.model';
 import {RoleService} from './user/role.service';
 import {UserEntity, UserStatus} from './user/user.model';
@@ -12,11 +14,14 @@ import {UserService} from './user/user.service';
 export class AuthService {
 
   public constructor(private config: ConfigService<AuthConfig>,
+                     private eventEmitter: EventEmitter2,
                      private roleService: RoleService,
                      private userService: UserService) {
   }
 
   public async register(request: RegisterRequest): Promise<Authorization> {
+    let event = new Event('auth:register', request.email);
+    this.eventEmitter.emit(event.type, event);
     let user = await this.userService.createOne({
       username: request.username,
       email: request.email,
@@ -28,6 +33,8 @@ export class AuthService {
   }
 
   public async login(request: LoginRequest): Promise<Authorization> {
+    let event = new Event('auth:login', request.username);
+    this.eventEmitter.emit(event.type, event);
     let user = await this.userService.findOneByUsername(request.username);
     if (!user)
       throw new NotFoundException('user not found');

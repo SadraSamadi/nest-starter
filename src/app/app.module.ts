@@ -1,4 +1,5 @@
 import {Module} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
 import {AuthModule} from '../auth/auth.module';
 import {AssetModule} from '../common/asset/asset.module';
 import {PrefModule} from '../common/pref/pref.module';
@@ -22,7 +23,7 @@ import {UserController} from './user/user.controller';
     PostModule,
     CommentModule
   ],
-  providers: [AppService],
+  providers: [AppService, ConfigService],
   controllers: [
     RoleController,
     UserController,
